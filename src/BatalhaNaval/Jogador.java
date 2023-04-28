@@ -4,61 +4,85 @@ import java.util.Scanner;
 
 public class Jogador {
     private String[] coordenadasLinhasLetras = {"A", "B", "C", "D", "E", "F", "G", "H"};
-    private String[][] meuJogo;
-    private String[][] jogoDoAdversario;
-    private int numRodadas;
+    private char[][] meuJogo;
+    private char[][] jogadaDoAdversario;
+//    private int numRodadas;
     private String nomeJogador;
-    static final int QTD_ARMAS_JOGADOR = 6;
-
-    public Jogador(String nomeJogador){
-        this.nomeJogador = nomeJogador;
-        this.meuJogo = new String[coordenadasLinhasLetras.length][coordenadasLinhasLetras.length];
-        this.jogoDoAdversario = new String[coordenadasLinhasLetras.length][coordenadasLinhasLetras.length];
-        this.numRodadas = 0;
-    }
+    static final int QTD_ARMAS_JOGADOR = 1;
 
     public String getNomeJogador(){
         return this.nomeJogador;
     }
 
-    public void adicionarArmasTabuleiro(){
-        System.out.println("Para cada jogador, são disponibilizadas 6 seis armas. 3 submarinos, 2 cruzadores e 1 porta-avião. \nAs armas são representadas por: s - submarino, c - cruzador e p - porta-avião.");
-        System.out.println("O jogo consiste em uma matriz 8X8, ou seja, 8 linhas e 8 colunas");
-        System.out.printf("Jogador(a) %s, adicione suas armas!: ", getNomeJogador());
-        System.out.println("\nPrimeiro informe as cordenadas das linhas e depois as cordenadas das colunas");
-        System.out.println("\nCoordenadas de linhas: A - 1, B - 2, C - 3, D - 4, E - 5, F - 6, G - 7, H - 8. \nCoordenadas das colunas: 1, 2, 3, 4, 5, 6, 7, 8");
+    public Jogador(String nomeJogador){
+        this.nomeJogador = nomeJogador;
+        this.meuJogo = new char[8][8];
+        this.jogadaDoAdversario = new char[8][8];
+//        this.numRodadas = 0;
+    }
 
+    public void inicializarMatrizComEspaco(){
         //"setando" os valores nulos da matriz de null para vazio
         for(int estadoValores = 0; estadoValores < meuJogo.length; estadoValores++){
-            Arrays.fill(meuJogo[estadoValores], " ");
+            Arrays.fill(meuJogo[estadoValores], ' ');
         }
+    }
 
-        //Atribuindo as armas a matriz
-        Scanner entradaValores = new Scanner(System.in);
-        for(int i = 0; i < QTD_ARMAS_JOGADOR; i++){
-            System.out.printf("\nAdicione sua %dª arma", i+1);
-            System.out.println("\nAdicione o número da linha: ");
-            int linha = entradaValores.nextInt();
-            System.out.println("Adicione o número da coluna: ");
-            int coluna = entradaValores.nextInt();
-            entradaValores.nextLine();
-            System.out.println("Adicione a arma na matriz: ");
-            String armaJogador = entradaValores.nextLine();
-            meuJogo[linha-1][coluna-1] = armaJogador;
-        }
-
+    public void imprimeMatrizDoJogador() {
         //Imprimido a matriz do jogador
         System.out.println("Matriz do jogador");
         for(int i = 1; i < coordenadasLinhasLetras.length+1; i++){
             System.out.print("     " + i);
         }
         System.out.println();
-        for(int linhaMatriz = 0; linhaMatriz < meuJogo.length; linhaMatriz++){
-            System.out.print(coordenadasLinhasLetras[linhaMatriz] + "  ");
-            for(int colunaMatriz = 0; colunaMatriz < meuJogo[linhaMatriz].length; colunaMatriz++){
-                System.out.print("| " + meuJogo[linhaMatriz][colunaMatriz] + " |" + " ");
+        for(int linha = 0; linha < meuJogo.length; linha++){
+            System.out.print(coordenadasLinhasLetras[linha] + "  ");
+            for(int coluna = 0; coluna < meuJogo[linha].length; coluna++){
+                System.out.print("| " + meuJogo[linha][coluna] + " |" + " ");
             }
             System.out.println();
+        }
+    }
+
+    public void adicionarArmas() {
+        Scanner scanner = new Scanner(System.in);
+        for(int i = 0; i < QTD_ARMAS_JOGADOR; i++){
+            System.out.printf("\nAdicione sua %dª arma", i+1);
+            System.out.println("\nAdicione o número da linha: ");
+            int linha = scanner.nextInt();
+
+            System.out.println("Adicione o número da coluna: ");
+            int coluna = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.println("Adicione a arma na matriz: ");
+            char armaJogador = scanner.next().charAt(0);
+
+            meuJogo[linha-1][coluna-1] = armaJogador;
+            imprimeMatrizDoJogador();
+        }
+    }
+
+    public void atirar(Jogador oponente, int linhaAlvo, int colunaAlvo) {
+        verificarSeAcertou(oponente, linhaAlvo, colunaAlvo);
+    }
+
+    private void verificarSeAcertou(Jogador oponente, int linhaAlvo, int colunaAlvo) {
+        for (int linha = 0; linha < oponente.meuJogo.length; linha++) {
+            if (linhaAlvo == linha) {
+                for (int coluna = 0; coluna < oponente.meuJogo[linha].length; coluna ++) {
+                    if (colunaAlvo == coluna) {
+                        if (colunaAlvo == 'c' || colunaAlvo == 's' || colunaAlvo == 'p') {
+                            jogadaDoAdversario[linha][coluna] = '⚫';
+                            System.out.println("Acertou!");
+                        }
+                        else {
+                            jogadaDoAdversario[linha][coluna] = '✖';
+                            System.out.println("Água!");
+                        }
+                    }
+                }
+            }
         }
     }
 
